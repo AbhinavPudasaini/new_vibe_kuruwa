@@ -1,0 +1,608 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareConnect - Find Caretakers</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .header {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .logo::before {
+            content: "💚";
+            margin-right: 0.5rem;
+        }
+
+        .welcome {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+        }
+
+        .care-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #20c997;
+        }
+
+        .datetime-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .btn-primary {
+            background: #20c997;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #1ba085;
+        }
+
+        .caretakers-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        .sort-dropdown {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            background: white;
+        }
+
+        .caretaker-card {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: border-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .caretaker-card:hover {
+            border-color: #20c997;
+            transform: translateY(-2px);
+        }
+
+        .caretaker-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .caretaker-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .caretaker-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #666;
+        }
+
+        .caretaker-details h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .caretaker-role {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #20c997;
+        }
+
+        .price-details {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stars {
+            color: #ffc107;
+        }
+
+        .rating-text {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .caretaker-status {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .status-icon {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-available { background: #28a745; }
+        .status-checked { background: #17a2b8; }
+        .status-experience { background: #6c757d; }
+
+        .caretaker-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-book {
+            flex: 1;
+            background: #20c997;
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-book:hover {
+            background: #1ba085;
+        }
+
+        .btn-contact {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-contact:hover {
+            background: #e9ecef;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h3 {
+            font-size: 1.3rem;
+            color: #333;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+            
+            .datetime-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .caretaker-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .caretaker-actions {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">CareConnect</div>
+        <div class="welcome">
+            Welcome, <strong>Abhinav</strong>
+            <div style="display: flex; gap: 0.5rem;">
+                <button style="background: none; border: none; cursor: pointer;">🔔</button>
+                <button style="background: none; border: none; cursor: pointer;">👤</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Left Form Section -->
+        <div class="care-form">
+            <div class="form-section">
+                <h2>Where do you need care?</h2>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="address" placeholder="123 Main St, Downtown" value="123 Main St, Downtown">
+                </div>
+                <div class="form-group">
+                    <select class="form-control" id="radius">
+                        <option value="5">Within 5 miles</option>
+                        <option value="10">Within 10 miles</option>
+                        <option value="15">Within 15 miles</option>
+                        <option value="25">Within 25 miles</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Care Details</h2>
+                <div class="form-group">
+                    <label for="careType">Type of Care</label>
+                    <select class="form-control" id="careType">
+                        <option value="">Select care type</option>
+                        <option value="nursing">Certified Nursing Assistant</option>
+                        <option value="practical">Licensed Practical Nurse</option>
+                        <option value="home_health">Home Health Aide</option>
+                        <option value="companion">Companion Care</option>
+                    </select>
+                </div>
+
+                <div class="datetime-group">
+                    <div class="form-group">
+                        <label for="startDate">Start Date</label>
+                        <input type="date" class="form-control" id="startDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="startTime">Start Time</label>
+                        <input type="time" class="form-control" id="startTime" value="07:30">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="duration">Duration</label>
+                    <select class="form-control" id="duration">
+                        <option value="2">2 hours</option>
+                        <option value="4" selected>4 hours</option>
+                        <option value="6">6 hours</option>
+                        <option value="8">8 hours</option>
+                        <option value="12">12 hours</option>
+                        <option value="24">24 hours</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="requirements">Special Requirements</label>
+                    <textarea class="form-control" id="requirements" rows="4" placeholder="Any specific needs or medical conditions to consider..."></textarea>
+                </div>
+
+                <button class="btn-primary" onclick="findCaretakers()">Find Available Caretakers</button>
+            </div>
+        </div>
+
+        <!-- Right Caretakers Section -->
+        <div class="caretakers-section">
+            <div class="section-header">
+                <h2>Available Caretakers</h2>
+                <select class="sort-dropdown" id="sortBy">
+                    <option value="rating">Sort by Rating</option>
+                    <option value="price">Sort by Price</option>
+                    <option value="distance">Sort by Distance</option>
+                    <option value="experience">Sort by Experience</option>
+                </select>
+            </div>
+
+            
+
+            <div id="caretakersContainer">
+                <div class="empty-state">
+                    <h3>Ready to find care?</h3>
+                    <p>Fill out the form and click "Find Available Caretakers" to see available care providers in your area.</p>
+                        <div class="caregiver-list">
+        <!-- {% for caretaker in caretakers %}
+        <div class="card">
+            <img src="{{ caretaker.image.url }}" alt="{{ caretaker.full_names }}">
+            <h2>{{ caretaker.full_names }}</h2> -->
+            <!-- <div class="rating">★★★★★ ({{ caretaker.rating_count|default:"0" }})</div> -->
+            <!-- <p>{{ caretaker.experiences }} years of Experience.</p>
+            <div class="location">{{ caretaker.location }}</div>
+            <div class="price">Rs.{{ caretaker.rate }} /hour</div>
+            <div class="availability">
+                {% if caretaker.availability %}
+                    ✅ Available now
+                    
+                {% else %}
+                    ❌ Not available -->
+                    
+                <!-- {% endif %} -->
+            <!-- </div> -->
+            <!-- <div class="buttons">
+                <button class="view">View Profile</button>
+              <button class="book" onclick="handleBooking({{ caretaker.id }}, {{ user.is_authenticated|yesno:'true,false' }})">Book Now
+    </button> -->
+            <!-- </div> -->
+        <!-- </div> -->
+        <!-- {% endfor %} -->
+    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="caretakersContainer"></div>
+
+
+    <script>
+       const userIsAuthenticated = {{ user.is_authenticated|yesno:"true,false" }};
+
+        let currentCaretakers = [];
+        let selectedCaretaker = null;
+
+        // Set default date to today
+        document.getElementById('startDate').value = new Date().toISOString().split('T')[0];
+        document.getElementById('bookingDate').value = new Date().toISOString().split('T')[0];
+
+        // Mock data for demonstration
+    
+async function findCaretakers() {
+    const container = document.getElementById('caretakersContainer');
+
+    container.innerHTML = '<div class="loading">Searching for available caretakers...</div>';
+
+    try {
+        const response = await fetch('/api/caretakers/');
+        if (!response.ok) throw new Error('Network response was not ok');
+
+        const caretakers = await response.json();
+        currentCaretakers = caretakers;
+        displayCaretakers(caretakers);
+    } catch (error) {
+        console.error('Error finding caretakers:', error);
+        container.innerHTML = `
+            <div class="empty-state">
+                <h3>Error</h3>
+                <p>Unable to find caretakers. Please try again.</p>
+            </div>`;
+    }
+}
+const hamburgerBtn = document.getElementById('hamburger-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        hamburgerBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            mobileMenu.style.display = mobileMenu.style.display === 'flex' ? 'none' : 'flex';
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!hamburgerBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
+                mobileMenu.style.display = 'none';
+            }
+        });
+    function handleBooking(caretakerId, isAuthenticated) {
+        if (isAuthenticated) {
+            window.location.href = `/book/${caretakerId}/`;  // Adjust this if your URL structure is different
+        } else {
+            alert("You need to log in to book a caretaker.");
+            window.location.href = `/login/?next=/book/${caretakerId}/`;
+        }
+    }
+
+function displayCaretakers(caretakers) {
+    const container = document.getElementById('caretakersContainer');
+
+    if (caretakers.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <h3>No Available Caretakers</h3>
+                <p>Please check again later.</p>
+            </div>`;
+        return;
+    }
+    
+
+    const html = caretakers.map(caretaker => `
+  <div class="card">
+      <img src="${caretaker.image_url || '/static/default-avatar.png'}" alt="${caretaker.full_names}" />
+      <h2>${caretaker.full_names}</h2>
+      <p>${caretaker.experiences} years of Experience</p>
+      <div class="location">${caretaker.location || ''}</div>
+      <div class="price">Rs.${caretaker.rate} /hour</div>
+      <div class="availability">
+          ${caretaker.availability ? '✅ Available now' : '❌ Not available'}
+      </div>
+      <div class="buttons">
+          <button class="view">View Profile</button>
+          <button class="book" onclick="handleBooking(${caretaker.id}, ${userIsAuthenticated})">Book Now</button>
+      </div>
+  </div>
+`).join('');
+
+    container.innerHTML = `<div class="caregiver-list">${html}</div>`;
+}
+
+        // Helper function to get CSRF token for Django
+        function getCsrfToken() {
+            return document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
+        }
+
+        // Sort functionality
+        document.getElementById('sortBy').addEventListener('change', function() {
+            const sortBy = this.value;
+            const sorted = [...currentCaretakers].sort((a, b) => {
+                switch(sortBy) {
+                    case 'rating':
+                        return b.rating - a.rating;
+                    case 'price':
+                        return a.price - b.price;
+                    case 'distance':
+                        return a.distance - b.distance;
+                    case 'experience':
+                        return b.experience - a.experience;
+                    default:
+                        return 0;
+                }
+            });
+            displayCaretakers(sorted);
+        });
+    </script>
+</body>
+</html>
